@@ -102,7 +102,7 @@ public class Startup
 
         app.UseEndpoints(endpoints =>
         {
-            var baget = new BaGetterEndpointBuilder();
+            var baget = new BaGetterEndpointBuilder(options);
 
             baget.MapEndpoints(endpoints);
         });

@@ -1,4 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
+using BaGetter.Authentication;
+using BaGetter.Core;
 using BaGetter.Web;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
@@ -9,9 +11,24 @@ namespace BaGetter;
 [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Would be a breaking change since it's part of the public API")]
 public class BaGetterEndpointBuilder
 {
+    private readonly BaGetterOptions options;
+
+    public BaGetterEndpointBuilder()
+    {
+
+    }
+
+    public BaGetterEndpointBuilder(BaGetterOptions options)
+    {
+        this.options = options;
+    }
+
     public void MapEndpoints(IEndpointRouteBuilder endpoints)
     {
-        endpoints.MapRazorPages();
+        var razorPagesBuilder = endpoints.MapRazorPages();
+
+        if (options != null && options.Authentication != null && !string.IsNullOrWhiteSpace(options.Authentication.RazorPagesPolicy))
+            razorPagesBuilder.RequireAuthorization(options.Authentication.RazorPagesPolicy);
 
         MapServiceIndexRoutes(endpoints);
         MapPackagePublishRoutes(endpoints);
